@@ -6,13 +6,12 @@ import 'page4.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  PageController pageController = PageController();
+  final PageController pageController = PageController();
   int selectedIndex = 0;
 
   void onTapped(int index) {
@@ -22,14 +21,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
+  BottomNavigationBarItem navItem(IconData icon, String label) {
+    return BottomNavigationBarItem(icon: Icon(icon), label: label);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
         controller: pageController,
-        onPageChanged: (index) => setState(() => selectedIndex = index),
+        physics: const ClampingScrollPhysics(),
+        onPageChanged: (i) => setState(() => selectedIndex = i),
         children: const [
           Page1(),
-          Page2(),
+          Page2(), // you asked for Page 2
           Page3(),
           Page4(),
         ],
@@ -37,13 +47,15 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         onTap: onTapped,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.indigo,
         unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Page 1"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Page 2"),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: "Page 3"),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Page 4"),
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          navItem(Icons.home_outlined, 'Home'),
+          navItem(Icons.pie_chart_outline, 'Reports'),
+          navItem(Icons.credit_card_outlined, 'Cards'),
+          navItem(Icons.person_outline, 'Profile'),
         ],
       ),
     );
